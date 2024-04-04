@@ -1,0 +1,1 @@
+export { default as Itidenary} from './Itinedary'

@@ -1,62 +1,127 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
+
 import TrashIcon from '@mui/icons-material/Delete';
+import DifferenceIcon from '@mui/icons-material/Difference';
+import WhetherIcon from '@mui/icons-material/SettingsSystemDaydream';
+
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 import PlusIcon from '@mui/icons-material/Add';
 
 import { Column, Id, Task } from "../../interfaces/types";
 import { TaskCard } from "..";
-import { SxProps } from "@mui/material";
+import { Box, IconButton, SxProps, TextField } from "@mui/material";
 
-export interface styledKanbanBoar {
-  mainKanbanContainer: SxProps;
+export interface styledColumnContainer {
+  dragging: SxProps;
+  mainColumnContainer: SxProps;
   header: SxProps;
-  hearderSortableContext: SxProps;
+  counter: SxProps;
   iconButtonStyle: SxProps;
+  textField: SxProps;
+  columnTaskContainer: SxProps;
 }
 
-const kanbanBoardStyle: styledKanbanBoar = {
-  mainKanbanContainer:{
-    margin: 'auto',
-    display: 'flex',
-    minHeight: '100vh',
-    width: '100%',
-    alignItems: 'center',
-    overflowX: 'auto',
-    overflowY: 'hidden',
-    paddingLeft: '40px',
+const columnContainerStyle: styledColumnContainer = {
+  dragging:{
+    backgroundColor: '#161C22', // Assuming columnBackgroundColor is '#161C22'
+    opacity: 0.4,
+    border: '2px solid #F0C419', // Assuming pink-500 is '#F0C419'
+    width: '350px',
+    height: '500px',
+    maxHeight: '500px',
+    borderRadius: '8px', // Equivalent to rounded-md
+    display: 'flex', // Equivalent to flex
+    flexDirection: 'column', // Equivalent to flex-col
+    '@media screen and (max-width: 440px)': {
+      
+    },
+  },
+  mainColumnContainer:{
+    backgroundColor: '#161C22', // Assuming columnBackgroundColor is '#161C22'
+    width: '350px',
+    height: '500px',
+    maxHeight: '500px',
+    borderRadius: '8px', // Equivalent to rounded-md
+    display: 'flex', // Equivalent to flex
+    flexDirection: 'column', // Equivalent to flex-col
     '@media screen and (max-width: 440px)': {
       
     },
   },
   header:{
-    display: 'flex',
-    gap: '4px',
-    margin: 'auto',
-    '@media screen and (max-width: 440px)': {
-      
-    },
+    backgroundColor: '#0D1117', // Assuming mainBackgroundColor is '#0D1117'
+    fontSize: '1rem', // Equivalent to text-md
+    height: '60px',
+    cursor: 'grab',
+    borderRadius: '8px', // Equivalent to rounded-md
+    borderBottomLeftRadius: '0', // Equivalent to rounded-b-none
+    padding: '12px', // Equivalent to p-3
+    fontWeight: 'bold', // Equivalent to font-bold
+    border: '4px solid #161C22', // Assuming columnBackgroundColor is '#161C22'
+    display: 'flex', // Equivalent to flex
+    alignItems: 'center', // Equivalent to items-center
+    justifyContent: 'space-between', // Equivalent to justify-between
   },
-  hearderSortableContext:{
-    display: 'flex',
-    gap: '4px',
+  counter:{
+    display: 'flex', // Equivalent to flex
+    justifyContent: 'center', // Equivalent to justify-center
+    alignItems: 'center', // Equivalent to items-center
+    backgroundColor: '#161C22', // Assuming columnBackgroundColor is '#161C22'
+    paddingX: '8px', // Equivalent to px-2
+    paddingY: '4px', // Equivalent to py-1
+    fontSize: '0.875rem', // Equivalent to text-sm
+    borderRadius: '9999px', // Equivalent to rounded-full
   },
   iconButtonStyle:{
-    height: '60px',
-    width: '350px',
-    minWidth: '350px',
-    cursor: 'pointer',
-    borderRadius: '8px', // Equivalent to rounded-lg
-    backgroundColor: '#0D1117', // Assuming mainBackgroundColor is '#0D1117'
-    border: '2px solid #161C22', // Assuming columnBackgroundColor is '#161C22'
-    padding: '16px', // Equivalent to p-4
-    boxShadow: '0 0 0 3px #F0C419', // Equivalent to ring-rose-500
-    '&:hover': {
-      boxShadow: '0 0 0 2px #F0C419' // Equivalent to hover:ring-2
+      display: 'flex', // Equivalent to flex
+      gap: '8px', // Equivalent to gap-2
+      alignItems: 'center', // Equivalent to items-center
+      border: '2px solid #161C22', // Assuming columnBackgroundColor is '#161C22'
+      borderRadius: '8px', // Equivalent to rounded-md
+      padding: '16px', // Equivalent to p-4
+      '&:hover': {
+        backgroundColor: '#0D1117', // Assuming mainBackgroundColor is '#0D1117'
+        color: '#F0C419', // Assuming rose-500 is '#F0C419'
+      },
+      '&:active': {
+        backgroundColor: 'black', // Equivalent to active:bg-black
+      },
+    }
+  ,
+  textField:{
+    backgroundColor: 'black', // Equivalent to bg-black
+      '&:focus': {
+        borderColor: '#F0C419', // Assuming rose-500 is '#F0C419'
+      },
+      border: '1px solid #161C22', // Assuming border color
+      borderRadius: '4px', // Equivalent to rounded
+      outline: 'none', // Equivalent to outline-none
+      paddingX: '8px', // Equivalent to px-2
+  },
+  columnTaskContainer:{
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    gap: '16px',
+    padding: '8px',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '8px',
     },
-    display: 'flex', // Equivalent to flex
-    gap: '8px' // Equivalent to gap-2
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      borderRadius: '8px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    },
   }
+
 }
 
 interface Props {
@@ -67,10 +132,12 @@ interface Props {
   createTask: (columnId: Id) => void;
   updateTask: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
+  doubleTask: (id: Id) => void;
+  changePeriodOfDay: (id: Id) => void;
   tasks: Task[];
 }
 
-const ColumnContainer:React.FC<Props> =({ column, deleteColumn, updateColumn, createTask, tasks, deleteTask, updateTask }) => {
+const ColumnContainer:React.FC<Props> =({ column, deleteColumn, updateColumn, createTask, tasks, deleteTask, updateTask, doubleTask, changePeriodOfDay}) => {
   const [editMode, setEditMode] = useState(false);
 
   const tasksIds = useMemo(() => {
@@ -100,81 +167,27 @@ const ColumnContainer:React.FC<Props> =({ column, deleteColumn, updateColumn, cr
 
   if (isDragging) {
     return (
-      <div
+      <Box
         ref={setNodeRef}
         style={style}
-        className="
-      bg-columnBackgroundColor
-      opacity-40
-      border-2
-      border-pink-500
-      w-[350px]
-      h-[500px]
-      max-h-[500px]
-      rounded-md
-      flex
-      flex-col
-      "
-      ></div>
+        sx={columnContainerStyle.dragging}
+      >
+      </Box>
     );
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="
-  bg-columnBackgroundColor
-  w-[350px]
-  h-[500px]
-  max-h-[500px]
-  rounded-md
-  flex
-  flex-col
-  "
-    >
+    <Box sx={columnContainerStyle.mainColumnContainer} ref={setNodeRef} style={style} >
       {/* Column title */}
-      <div
-        {...attributes}
-        {...listeners}
-        onClick={() => {
-          setEditMode(true);
-        }}
-        className="
-      bg-mainBackgroundColor
-      text-md
-      h-[60px]
-      cursor-grab
-      rounded-md
-      rounded-b-none
-      p-3
-      font-bold
-      border-columnBackgroundColor
-      border-4
-      flex
-      items-center
-      justify-between
-      "
-      >
-        <div className="flex gap-2">
-          <div
-            className="
-        flex
-        justify-center
-        items-center
-        bg-columnBackgroundColor
-        px-2
-        py-1
-        text-sm
-        rounded-full
-        "
-          >
-            0
-          </div>
+      <Box sx={columnContainerStyle.header} {...attributes} {...listeners} onClick={() =>  setEditMode(true)}>
+        <Box sx={{display: 'flex', gap: '2px' }}>
+          <Box sx={columnContainerStyle.counter} >
+            {tasks.length}
+          </Box>
           {!editMode && column.title}
           {editMode && (
-            <input
-              className="bg-black focus:border-rose-500 border rounded outline-none px-2"
+            <TextField
+              sx={columnContainerStyle.textField}
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus
@@ -187,48 +200,94 @@ const ColumnContainer:React.FC<Props> =({ column, deleteColumn, updateColumn, cr
               }}
             />
           )}
-        </div>
-        <button
+        </Box>
+
+        <IconButton
           onClick={() => {
             deleteColumn(column.id);
           }}
-          className="
-        stroke-gray-500
-        hover:stroke-white
-        hover:bg-columnBackgroundColor
-        rounded
-        px-1
-        py-2
-        "
+          sx={{
+            stroke: '#A0AEC0', // Equivalent to stroke-gray-500
+            '&:hover': {
+              stroke: '#FFF', // Equivalent to hover:stroke-white
+              backgroundColor: '#161C22', // Assuming columnBackgroundColor is '#161C22'
+            },
+            borderRadius: '4px', // Equivalent to rounded
+            paddingX: '4px', // Equivalent to px-1
+            paddingY: '8px', // Equivalent to py-2
+          }}
         >
           <TrashIcon />
-        </button>
-      </div>
+        </IconButton>
+
+      </Box>
 
       {/* Column task container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+      <Box sx={columnContainerStyle.columnTaskContainer}>
         <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
+          {tasks.map((task, indice) => (
+            <Box sx={{display:'flex', flexDirection:'column'}} key={indice} >
+            <Box sx={{display:'flex',width:'40%', borderRadius:'20px 20px 0px 0px', backgroundColor:'#202020', border:'2px solid #0D1117'}}>
+              <IconButton
+                sx={{}}
+                onClick={() => {
+                  deleteTask(task.id);
+                }}
+                
+              >
+                <TrashIcon  />
+              </IconButton>
+              
+            
+              <IconButton
+                sx={{}}
+                onClick={() => {
+                  doubleTask(task.id);
+                }}
+                
+              >
+                <DifferenceIcon />
+              </IconButton>
+              
+            
+              
+              <IconButton
+                sx={{}}
+                onClick={() => {
+                  changePeriodOfDay(task.id);
+                }}
+                
+              >
+                <WhetherIcon />
+              </IconButton>
+          </Box>
             <TaskCard
               key={task.id}
               task={task}
               deleteTask={deleteTask}
               updateTask={updateTask}
+              doubleTask={doubleTask}
+              changePeriodOfDay={changePeriodOfDay}
             />
+            
+        
+            </Box>
+            
           ))}
         </SortableContext>
-      </div>
+      </Box>
       {/* Column footer */}
-      <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
+      <IconButton
+        sx={columnContainerStyle.iconButtonStyle}
+        
         onClick={() => {
           createTask(column.id);
         }}
       >
         <PlusIcon />
         Add task
-      </button>
-    </div>
+      </IconButton>
+    </Box>
   );
 }
 

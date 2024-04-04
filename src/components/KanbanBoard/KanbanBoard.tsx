@@ -14,10 +14,10 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
-import { Column, Id, Task } from "../../interfaces/types";
+import { Column, Day, Id, Task } from "../../interfaces/types";
 import { defaultCols, defaultTasks } from "../../utils/data";
 import { ColumnContainer, TaskCard } from "..";
-import { Box, IconButton, SxProps } from '@mui/material';
+import { Box, Button, IconButton, SxProps } from '@mui/material';
 
 
 export interface styledKanbanBoar {
@@ -59,7 +59,7 @@ const kanbanBoardStyle: styledKanbanBoar = {
     minWidth: '350px',
     cursor: 'pointer',
     borderRadius: '8px', // Equivalent to rounded-lg
-    backgroundColor: '#0D1117', // Assuming mainBackgroundColor is '#0D1117'
+    backgroundColor: '#202020', // Assuming mainBackgroundColor is '#0D1117'
     border: '2px solid #161C22', // Assuming columnBackgroundColor is '#161C22'
     padding: '16px', // Equivalent to p-4
     boxShadow: '0 0 0 3px #F0C419', // Equivalent to ring-rose-500
@@ -71,7 +71,12 @@ const kanbanBoardStyle: styledKanbanBoar = {
   }
 }
 
-const KanbanBoard = () => {
+interface Props {
+  changeState: (days:Day[])=> void
+  nextStep: ()=> void
+}
+
+const KanbanBoard:React.FC<Props> = ({changeState, nextStep}) => {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -80,6 +85,50 @@ const KanbanBoard = () => {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+
+  const finishSelection = () =>{
+    const daysMap: { [key: string]: Day } = {};
+
+    // Inicializamos el mapa de días con objetos Day vacíos
+    columns.forEach(column => {
+      daysMap[column.id] = {
+        id: column.id,
+        titleday: column.title,
+        timeofday: {
+          morning: [],
+          afternoon: [],
+          night: [],
+        },
+      };
+    });
+  
+    // Clasificamos las tareas por día y período del día
+    tasks.forEach(task => {
+      const { time, content, columnId } = task;
+      
+      if (daysMap[columnId]) {
+        switch (time) {
+          case 'mañana':
+            daysMap[columnId].timeofday.morning.push(content);
+            break;
+          case 'tarde':
+            daysMap[columnId].timeofday.afternoon.push(content);
+            break;
+          case 'noche':
+            daysMap[columnId].timeofday.night.push(content);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  
+    // Convertimos el mapa de días en un array de días
+    const days: Day[] = Object.values(daysMap);
+    changeState(days);
+    nextStep();
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -93,6 +142,7 @@ const KanbanBoard = () => {
     const newTask: Task = {
       id: generateId(),
       columnId,
+      time:'mañana',
       content: `Task ${tasks.length + 1}`,
     };
   
@@ -112,6 +162,41 @@ const KanbanBoard = () => {
   
     setTasks(newTasks);
   };
+
+  const doubleTask = (id: Id) => {
+    const taskToReplicate = tasks.find(task => task.id === id);
+    if (taskToReplicate) {
+        const newId = generateId().toString(); // Genera un nuevo ID para la tarea replicada
+        const replicatedTask = { ...taskToReplicate, id: newId };
+        setTasks(prevTasks => [...prevTasks, replicatedTask]);
+    }
+};
+
+const changePeriodOfDay = (id: Id) => {
+  const newTasks = tasks.map((task) => {
+      if (task.id !== id) return task;
+      
+      let newPeriod;
+      switch (task.time) {
+          case 'mañana':
+              newPeriod = 'tarde';
+              break;
+          case 'tarde':
+              newPeriod = 'noche';
+              break;
+          case 'noche':
+              newPeriod = 'mañana';
+              break;
+          default:
+              newPeriod = task.time; // Si no es ninguno de los valores esperados, mantiene el periodo actual
+      }
+      
+      return { ...task, time: newPeriod };
+  });
+  
+  setTasks(newTasks);
+};
+
   
   const createNewColumn = () => {
     const columnToAdd: Column = {
@@ -220,7 +305,7 @@ const KanbanBoard = () => {
       });
     }
   };
-
+  
   return (
     <Box sx={ kanbanBoardStyle.mainKanbanContainer} >
       <DndContext
@@ -242,16 +327,27 @@ const KanbanBoard = () => {
                   createTask={createTask}
                   deleteTask={deleteTask}
                   updateTask={updateTask}
+                  doubleTask={doubleTask}
+                  changePeriodOfDay={changePeriodOfDay}
                   tasks={tasks.filter((task) => task.columnId === col.id)}
                 />
               ))}
             </SortableContext>
           </Box>
 
-          <IconButton onClick={() => createNewColumn()} sx={kanbanBoardStyle.iconButtonStyle}>
-            <PlusIcon />
-            Add Column
-          </IconButton>
+            <Box sx={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
+              
+              <IconButton onClick={() => createNewColumn()} sx={kanbanBoardStyle.iconButtonStyle}>
+                <PlusIcon />
+                Add Column
+              </IconButton>
+
+              <Button variant='contained' onClick={() => finishSelection()} sx={kanbanBoardStyle.iconButtonStyle}>
+                End
+              </Button>
+
+            </Box>
+
         </Box>
 
         {createPortal(
@@ -264,6 +360,8 @@ const KanbanBoard = () => {
                 createTask={createTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                doubleTask={doubleTask}
+                changePeriodOfDay={changePeriodOfDay}
                 tasks={tasks.filter(
                   (task) => task.columnId === activeColumn.id
                 )}
@@ -274,6 +372,8 @@ const KanbanBoard = () => {
                 task={activeTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                doubleTask={doubleTask}
+                changePeriodOfDay={changePeriodOfDay}
               />
             )}
           </DragOverlay>,
@@ -286,8 +386,8 @@ const KanbanBoard = () => {
 }
 
 function generateId() {
-  /* Generate a random number between 0 and 10000 */
-  return Math.floor(Math.random() * 10001);
+  /* Generate a random number between 0 and 100000 */
+  return Math.floor(Math.random() * 100001).toString();
 }
 
 export default KanbanBoard;
