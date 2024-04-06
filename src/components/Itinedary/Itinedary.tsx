@@ -1,6 +1,7 @@
 import React from 'react'
 import { DateTimeProps, Day } from '../../interfaces/types'
 import { Box, SxProps, Typography } from '@mui/material'
+import { Header } from '../../utils/assets';
 
 export interface styledItinedary {
     containerMain: SxProps;
@@ -16,7 +17,7 @@ const itinedaryStyle: styledItinedary = {
     containerMain:{
       position:'relative',
       border:'1px solid red', 
-
+      backgroundColor:'#596c70',
       display:'flex',
       flexDirection:'column',
       alignItems:'center',
@@ -29,7 +30,13 @@ const itinedaryStyle: styledItinedary = {
       },
     },
     containerHeader:{
-      border:'1px solid yellow', 
+      border:'5px solid #121923', 
+      borderRadius:'5px',
+      width:'80%',
+      height:'220px',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundImage: `url(${Header})`,
     },
     containerDateTime:{
       border:'1px solid tomato', 
@@ -70,7 +77,6 @@ const Itinedary: React.FC<Props> = ({dateTime, daysState}) => {
   return (
     <Box sx={itinedaryStyle.containerMain}>
         <Box sx={itinedaryStyle.containerHeader}>
-            
         </Box>
         <Box sx={itinedaryStyle.containerDateTime}>
             <Typography>ITINERARIO</Typography>
