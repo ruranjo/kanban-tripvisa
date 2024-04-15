@@ -10,7 +10,7 @@ import PlusIcon from '@mui/icons-material/Add';
 
 import { Column, Id, Task } from "../../interfaces/types";
 import { TaskCard } from "..";
-import { Box, IconButton, SxProps, TextField } from "@mui/material";
+import { Box, IconButton, SxProps, TextField, Tooltip } from "@mui/material";
 
 export interface styledColumnContainer {
   dragging: SxProps;
@@ -54,6 +54,7 @@ const columnContainerStyle: styledColumnContainer = {
     fontSize: '1rem', // Equivalent to text-md
     height: '60px',
     cursor: 'grab',
+    color:'white',
     borderRadius: '8px', // Equivalent to rounded-md
     borderBottomLeftRadius: '0', // Equivalent to rounded-b-none
     padding: '12px', // Equivalent to p-3
@@ -64,6 +65,7 @@ const columnContainerStyle: styledColumnContainer = {
     justifyContent: 'space-between', // Equivalent to justify-between
   },
   counter:{
+    color:'white',
     display: 'flex', // Equivalent to flex
     justifyContent: 'center', // Equivalent to justify-center
     alignItems: 'center', // Equivalent to items-center
@@ -74,6 +76,7 @@ const columnContainerStyle: styledColumnContainer = {
     borderRadius: '9999px', // Equivalent to rounded-full
   },
   iconButtonStyle:{
+    color:'white',
       display: 'flex', // Equivalent to flex
       gap: '8px', // Equivalent to gap-2
       alignItems: 'center', // Equivalent to items-center
@@ -90,16 +93,23 @@ const columnContainerStyle: styledColumnContainer = {
     }
   ,
   textField:{
-    backgroundColor: 'black', // Equivalent to bg-black
-      '&:focus': {
-        borderColor: '#F0C419', // Assuming rose-500 is '#F0C419'
-      },
-      border: '1px solid #161C22', // Assuming border color
+    color:'white',
+    backgroundColor: '#202020', // Equivalent to bg-black
+    border: '1px solid #161C22', // Assuming border color
       borderRadius: '4px', // Equivalent to rounded
       outline: 'none', // Equivalent to outline-none
       paddingX: '8px', // Equivalent to px-2
+      '&:focus': {
+        borderColor: '#161C22', // Assuming rose-500 is '#F0C419'
+        color:'white',
+      },
+      '&:active': {
+        color:'white', // Equivalent to active:bg-black
+      },
+      
   },
   columnTaskContainer:{
+    color:'white',
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
@@ -128,7 +138,6 @@ interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
-
   createTask: (columnId: Id) => void;
   updateTask: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
@@ -228,38 +237,42 @@ const ColumnContainer:React.FC<Props> =({ column, deleteColumn, updateColumn, cr
           {tasks.map((task, indice) => (
             <Box sx={{display:'flex', flexDirection:'column'}} key={indice} >
             <Box sx={{display:'flex',width:'40%', borderRadius:'20px 20px 0px 0px', backgroundColor:'#202020', border:'2px solid #0D1117'}}>
-              <IconButton
-                sx={{}}
-                onClick={() => {
-                  deleteTask(task.id);
-                }}
-                
-              >
-                <TrashIcon  />
-              </IconButton>
+              <Tooltip title="eliminar">
+                <IconButton
+                  sx={{}}
+                  onClick={() => {
+                    deleteTask(task.id);
+                  }}
+                  
+                >
+                  <TrashIcon  />
+                </IconButton>
+              </Tooltip>
               
-            
-              <IconButton
-                sx={{}}
-                onClick={() => {
-                  doubleTask(task.id);
-                }}
-                
-              >
-                <DifferenceIcon />
-              </IconButton>
+              <Tooltip title="duplicar">
+                <IconButton
+                  sx={{}}
+                  onClick={() => {
+                    doubleTask(task.id);
+                  }}
+                  
+                >
+                  <DifferenceIcon />
+                </IconButton>
+              </Tooltip>
               
-            
-              
-              <IconButton
-                sx={{}}
-                onClick={() => {
-                  changePeriodOfDay(task.id);
-                }}
-                
-              >
-                <WhetherIcon />
-              </IconButton>
+  
+              <Tooltip title={task.time}>
+                <IconButton
+                  sx={{}}
+                  onClick={() => {
+                    changePeriodOfDay(task.id);
+                  }}
+                  
+                >
+                  <WhetherIcon />
+                </IconButton>
+              </Tooltip>
           </Box>
             <TaskCard
               key={task.id}

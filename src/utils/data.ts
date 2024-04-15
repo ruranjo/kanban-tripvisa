@@ -2,99 +2,106 @@ import { Column, CountryType, Task } from "../interfaces/types";
 
 export const defaultCols: Column[] = [
     {
-      id: "dia 1",
-      title: "dia 1",
+      id: "Día 1: Día de llegada",
+      title: "Día 1: Día de llegada",
     },
     {
-      id: "dia 2",
-      title: "dia 2",
+      id: "Día 2: Explorando San Salvador",
+      title: "Día 2: Explorando San Salvador",
     },
     {
-      id: "dia 3",
-      title: "dia 3",
+      id: "Día 3: Naturaleza y cultura",
+      title: "Día 3: Naturaleza y cultura",
     },
   ];
+
+  /*
+  quila en el hotel o
+explorar más restaurantes locales.
+Desayuno en el hotel.
+Excursión al Parque Nacional El Boquerón, un volcán inactivo
+con senderos para caminatas y vistas panorámicas.
+
+  */
   
   export const defaultTasks: Task[] = [
     {
       id: "1",
-      time:"mañana",
-      columnId: "dia 1",
-      content: "List admin APIs for dashboard",
+      time:"noche",
+      columnId: "Día 1: Día de llegada",
+      content: "21:05 h ↠ Alojamiento y acondicionamiento en el hotel.",
 
     },
     {
       id: "2",
       time:'mañana',
-      columnId: "dia 1",
-      content:
-        "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Desayuno en el hotel.",
     },
     {
       id: "3",
       time:'mañana',
-      columnId: "dia 2",
-      content: "Conduct security testing",
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Visita al Museo Nacional de Antropología David J. Guzmán para aprender sobre la historia y la cultura de El Salvador.",
     },
     {
       id: "4",
-      time:'mañana',
-      columnId: "dia 2",
-      content: "Analyze competitors",
+      time:'tarde',
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Almuerzo en un restaurante local.",
     },
     {
       id: "5",
-      time:'mañana',
-      columnId: "dia 3",
-      content: "Create UI kit documentation",
+      time:'tarde',
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Visita al Centro Histórico de San Salvador, incluyendo la Plaza Barrios, la Catedral Metropolitana, y el Palacio Nacional.",
     },
     {
       id: "6",
-      time:'mañana',
-      columnId: "dia 3",
-      content: "Dev meeting",
+      time:'noche',
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Cena en un restaurante típico salvadoreño.",
     },
     {
       id: "7",
-      time:'mañana',
-      columnId: "dia 3",
-      content: "Deliver dashboard prototype",
+      time:'noche',
+      columnId: "Día 2: Explorando San Salvador",
+      content: "Tiempo libre para relajarse en el hotel o explorar la vida nocturna de la ciudad.",
     },
     {
       id: "8",
       time:'mañana',
-      columnId: "dia 1",
-      content: "Optimize application performance",
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Desayuno en el hotel",
     },
     {
       id: "9",
       time:'mañana',
-      columnId: "dia 1",
-      content: "Implement data validation",
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Excursión al Parque Nacional El Boquerón, un volcán inactivo con senderos para caminatas y vistas panorámicas.",
     },
     {
       id: "10",
-      time:'mañana',
-      columnId: "dia 1",
-      content: "Design database schema",
+      time:'tarde',
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Almuerzo en un restaurante cerca del parque.",
     },
     {
       id: "11",
-      time:'mañana',
-      columnId: "dia 1",
-      content: "Integrate SSL web certificates into workflow",
-    },
-    {
+      time:'tarde',
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Visita al Paseo El Carmen, un área comercial y cultural con tiendas de artesanías y restaurantes.",
+    },{
       id: "12",
-      time:'mañana',
-      columnId: "dia 2",
-      content: "Implement error logging and monitoring",
+      time:'noche',
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Regreso al hotel.",
     },
     {
       id: "13",
-      time:'mañana',
-      columnId: "dia 2",
-      content: "Design and implement responsive UI",
+      time:'noche',
+      columnId: "Día 3: Naturaleza y cultura",
+      content: "Opción de disfrutar de una cena tranquila en el hotel o explorar más restaurantes locales.",
     },
   ];
 

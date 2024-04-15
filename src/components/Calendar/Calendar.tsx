@@ -153,7 +153,22 @@ const Calendar: React.FC<Props> = ({changeDateTime, nextStep}) => {
           <AutocompleteField id="start-country-select-demo" label="País de salida" options={countriesArray} onSelect={(value) => handleCountrySelect(value, 'startCountry')} />
           <AutocompleteField id="end-country-select-demo" label="País de entrada" options={countriesArray} onSelect={(value) => handleCountrySelect(value, 'endCountry')} />
         </Box>
-        <Button variant='contained' onClick={() => handleSubmit()} sx={{ height: '60px', width: '350px', minWidth: '350px', cursor: 'pointer', borderRadius: '8px', backgroundColor: '#202020', border: '2px solid #161C22', padding: '16px', boxShadow: '0 0 0 3px #F0C419', '&:hover': { boxShadow: '0 0 0 2px #F0C419' }, display: 'flex', gap: '8px' }}>
+        <Button variant='contained' onClick={() => handleSubmit()} sx={{
+          height: '60px',
+          width: '350px',
+          minWidth: '350px',
+          cursor: 'pointer',
+          borderRadius: '8px', // Equivalent to rounded-lg
+          backgroundColor: '#202020', // Assuming mainBackgroundColor is '#0D1117'
+          border:'none',
+          padding: '16px', // Equivalent to p-4
+          boxShadow: '0 0 0 3px #F0C419', // Equivalent to ring-rose-500
+          '&:hover': {
+            backgroundColor: '#202020' // Change to your desired hover background color
+          },
+          display: 'flex', // Equivalent to flex
+          gap: '8px' // Equivalent to gap-2
+        }}>
           End
         </Button>
       </Box>

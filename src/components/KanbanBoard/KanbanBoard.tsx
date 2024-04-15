@@ -17,7 +17,7 @@ import { createPortal } from "react-dom";
 import { Column, Day, Id, Task } from "../../interfaces/types";
 import { defaultCols, defaultTasks } from "../../utils/data";
 import { ColumnContainer, TaskCard } from "..";
-import { Box, Button, IconButton, SxProps } from '@mui/material';
+import { Box, Button, SxProps } from '@mui/material';
 
 
 export interface styledKanbanBoar {
@@ -25,6 +25,7 @@ export interface styledKanbanBoar {
   header: SxProps;
   hearderSortableContext: SxProps;
   iconButtonStyle: SxProps;
+  headerBottomContainer: SxProps;
 }
 
 const kanbanBoardStyle: styledKanbanBoar = {
@@ -43,31 +44,41 @@ const kanbanBoardStyle: styledKanbanBoar = {
   },
   header:{
     display: 'flex',
-    gap: '4px',
+    flexDirection:'column',
+    gap: 4,
     margin: 'auto',
     '@media screen and (max-width: 440px)': {
       
     },
   },
   hearderSortableContext:{
+    
     display: 'flex',
-    gap: '4px',
+    gap: 4,
+    
   },
   iconButtonStyle:{
+    
     height: '60px',
     width: '350px',
     minWidth: '350px',
     cursor: 'pointer',
     borderRadius: '8px', // Equivalent to rounded-lg
     backgroundColor: '#202020', // Assuming mainBackgroundColor is '#0D1117'
-    border: '2px solid #161C22', // Assuming columnBackgroundColor is '#161C22'
+    border:'none',
     padding: '16px', // Equivalent to p-4
     boxShadow: '0 0 0 3px #F0C419', // Equivalent to ring-rose-500
     '&:hover': {
-      boxShadow: '0 0 0 2px #F0C419' // Equivalent to hover:ring-2
+      backgroundColor: '#202020' // Change to your desired hover background color
     },
     display: 'flex', // Equivalent to flex
     gap: '8px' // Equivalent to gap-2
+  },
+  headerBottomContainer:{
+    //border:'1px solid red',
+    display:'flex',
+    gap: 4,
+    justifyContent:'center'
   }
 }
 
@@ -316,6 +327,19 @@ const changePeriodOfDay = (id: Id) => {
       >
         <Box sx={ kanbanBoardStyle.header} >
           
+            <Box sx={kanbanBoardStyle.headerBottomContainer}>
+              
+              <Button variant='contained' onClick={() => createNewColumn()} sx={kanbanBoardStyle.iconButtonStyle}>
+                <PlusIcon />
+                Add Column
+              </Button>
+
+              <Button variant='contained' onClick={() => finishSelection()} sx={kanbanBoardStyle.iconButtonStyle}>
+                NEXT
+              </Button>
+
+            </Box>
+
           <Box sx={ kanbanBoardStyle.hearderSortableContext}>
             <SortableContext items={columnsId}>
               {columns.map((col) => (
@@ -335,18 +359,7 @@ const changePeriodOfDay = (id: Id) => {
             </SortableContext>
           </Box>
 
-            <Box sx={{display:'flex', flexDirection:'column', justifyContent:'center'}}>
-              
-              <IconButton onClick={() => createNewColumn()} sx={kanbanBoardStyle.iconButtonStyle}>
-                <PlusIcon />
-                Add Column
-              </IconButton>
-
-              <Button variant='contained' onClick={() => finishSelection()} sx={kanbanBoardStyle.iconButtonStyle}>
-                End
-              </Button>
-
-            </Box>
+            
 
         </Box>
 
