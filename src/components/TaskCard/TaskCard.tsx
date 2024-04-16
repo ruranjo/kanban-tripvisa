@@ -3,14 +3,14 @@ import { CSSProperties, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Id, Task } from "../../interfaces/types";
-import { Box, IconButton, SxProps, Tooltip, Typography } from "@mui/material";
+import { Box, SxProps, Typography } from "@mui/material";
 
 interface Props {
   task: Task;
-  deleteTask: (id: Id) => void;
+  deleteTask?: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
-  doubleTask: (id: Id) => void;
-  changePeriodOfDay: (id: Id) => void;
+  doubleTask?: (id: Id) => void;
+  changePeriodOfDay?: (id: Id) => void;
 }
 
 export interface styledTaskCard {
@@ -153,8 +153,8 @@ const taskCardStyle: styledTaskCard = {
 }
 
 
-const TaskCard:React.FC<Props> = ({ task, deleteTask, updateTask, doubleTask, changePeriodOfDay }) => {
-  const [mouseIsOver, setMouseIsOver] = useState(false);
+const TaskCard:React.FC<Props> = ({ task, updateTask  }) => {
+  const [_mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(true);
 
   const {
